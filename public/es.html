@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Nuestra Boda | Kevin & Nicole</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="/favicon.ico" type="image/favicon-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&family=Winky+Sans:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Winky+Sans:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div class="heart-loader"></div><br>
+        <img src="logo-K-N.svg" alt="" width="100px" height="50px">
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav id="main-nav">
+        <div class="nav-content">
+            <div class="logo"><img src="logo-K-N.svg" alt="" width="100px" height="50px"></div>
+            <ul class="nav-links">
+                <li><a href="#home">Inicio</a></li>
+                <li><a href="#date">Fecha</a></li>
+                <li><a href="#location">Ubicación</a></li>
+                <li><a href="#dress-code">Código de Vestimenta</a></li>
+                <li><a href="#rsvp">Confirmación</a></li>
+            </ul>
+            <button id="language-toggle">EN</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Banner Section -->
+        <section id="home" class="banner">
+            <div class="banner-content">
+                <h1>Kevin & Nicole</h1>
+                <p>Nos casamos en:</p>
+                <div class="countdown" id="countdown">
+                    <div class="countdown-item">
+                        <span id="days">00</span>
+                        <span>Días</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span id="hours">00</span>
+                        <span>Horas</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span id="minutes">00</span>
+                        <span>Minutos</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span id="seconds">00</span>
+                        <span>Segundos</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Date Section -->
+        <section id="date" class="date">
+            <div class="section-content">
+                <h2>Nuestra Fecha Especial</h2>
+                <div class="date-card">
+                    <h3>09 de Abril, 2026</h3>
+                    <p>"El amor no se mide por cuánto amamos, sino por cuántas veces amamos"</p>
+                    <button id="add-to-calendar" class="add-to-calendar">Guardar en Calendario</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Location Section -->
+        <section id="location" class="location">
+            <div class="section-content">
+                <h2>Lugar de la Ceremonia</h2>
+                <div class="location-card">
+                    <div id="map" class="map">
+                        <iframe src="https://www.google.com/maps/d/embed?mid=1e63omnkqxns3ziQob-lf6uvXtjl_2ZQ&ehbc=2E312F&noprof=1" width="100%" height="300"></iframe>
+                    </div>
+                    <div class="location-details">
+                        <h3>Chateau La Mer</h3>
+                        <p>845 South Wellwood Avenue, Lindenhurst, New York, 11757</p>
+                        <div class="navigation-buttons">
+                            <a href="https://maps.app.goo.gl/RAo1WEVN1Npe5zxC7?g_st=aw" class="nav-button" id="google-maps">Google Maps</a>
+                            <a href="#" class="nav-button" id="waze">Waze</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dress Code Section -->
+        <section id="dress-code" class="dress-code">
+            <h2>Código de Vestimenta</h2>
+            <div class="dress-code-container">
+                <div class="dress-column">
+                    <h3>Caballeros</h3>
+                    <div class="dress-image men"><img src="Traje-Hombres.jpg" alt="Traje Formal Oscuro Hombres" width="320px" height="320px"></div>
+                    <p>Traje Formal Oscuro</p>
+                </div>
+                <div class="dress-column">
+                    <h3>Damas</h3>
+                    <div class="dress-image women"><img src="Traje-Mujeres.jpg" alt="Traje Formal Oscuro Mujeres" width="320px" height="320px"></div>
+                    <p>Vestido Largo Elegante</p>
+                </div>
+            </div>
+            <div class="color-palette">
+                <div class="color-chip" style="background-color: #021D48"></div>
+                <div class="color-chip" style="background-color: #B08042"></div>
+                <div class="color-chip" style="background-color: #D4C3A9"></div>
+            </div>
+            <p class="dress-column">Colores sugeridos</p>
+        </section>
+
+        <!-- RSVP Section -->
+        <section id="rsvp" class="rsvp">
+            <div class="section-content">
+                <h2>Confirmación de Asistencia</h2>
+                <button id="rsvp-button" class="main-button">Confirmar Asistencia</button>
+            </div>
+        </section>
+
+        <!-- Photo Gallery Section -->
+        <section id="gallery" class="gallery">
+            <h2>Nuestros Momentos</h2>
+            <div class="gallery-grid" id="photo-gallery"></div>
+        </section>
+
+        <!-- Share Photos Section -->
+        <section id="share-photos" class="share-photos">
+            <h2>Comparte Tus Fotos</h2>
+            <div class="qr-container">
+                <div id="qr-code">
+                    <img src="qr-photos.jpg" alt="Share Photos" width="280px" height="336px">
+                    <p>Escanea para compartir tus fotos de nuestra boda o da click <a href="https://forms.gle/G2EogErdia7iHhK29" target="_blank">aquí</a></p>
+                </div>
+                
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>Con amor, Kevin & Nicole</p>
+        <p>¡Gracias por ser parte de nuestra historia!</p>
+    </footer>
+
+    <!-- Modals -->
+    <div id="rsvp-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Confirma tu Asistencia</h2>
+            <form id="rsvp-form">
+                <input type="text" id="guestName" placeholder="Nombre completo" required>
+                
+                <div class="attendance-options">
+                    <label>
+                        <input type="radio" name="attendance" value="yes" required>
+                        Asistiré
+                    </label>
+                    <label>
+                        <input type="radio" name="attendance" value="no">
+                        No podré asistir
+                    </label>
+                </div>
+    
+                <textarea id="guestMessage" placeholder="Mensaje para los novios (opcional)"></textarea>
+                
+                <button type="submit" class="main-button">Enviar</button>
+            </form>
+            
+            <div id="thank-you-message" style="display:none; text-align: center;">
+                <h3>¡Gracias por tu respuesta!</h3>
+                <p>Hemos recibido tu confirmación.</p>
+            </div>
+        </div>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+{
+  "hosting": {
+    "public": "public",
+    "rewrites": [
+      {
+        "source": "/es",
+        "destination": "/es.html"
+      },
+      {
+        "source": "/en",
+        "destination": "/en.html"
+      }
+    ],
+    "ignore": [
+      "firebase.json",
+      "/.*",
+      "/node_modules/"
+    ],
+    "headers": [
+      {
+        "source": "/public/es.html",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=31536000"
+          }
+        ]
+      },
+      {
+        "source": "/public/en.html",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=31536000"
+          }
+        ]
+      },
+      {
+        "source": "/*.@(css|js|png|jpg|jpeg|gif|ico|webp|svg|ttf)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=31536000, public"
+          }
+        ]
+      }
+    ]
+  }
+}
