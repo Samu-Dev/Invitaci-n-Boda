@@ -59,54 +59,112 @@ document.addEventListener('DOMContentLoaded', () => {
             modal.style.display = 'none';
         }
     });
+    
+    // Mostrar sección de invitados solo si se asiste
+    document.querySelectorAll('input[name="attendance"]').forEach(el => {
+        el.addEventListener('change', function() {
+            const guestsSection = document.getElementById('guests-section');
+            const noSection = document.getElementById('no-section');
+            const noGuestNameInput = document.getElementById('noGuestName');
+            if (this.value === 'yes') {
+                guestsSection.style.display = 'block';
+                noSection.style.display = 'none';
+                if (noGuestNameInput) noGuestNameInput.removeAttribute('required');
+            } else {
+                guestsSection.style.display = 'none';
+                noSection.style.display = 'block';
+                if (noGuestNameInput) noGuestNameInput.setAttribute('required', 'required');
+                document.getElementById('guestNames').innerHTML = '';
+                document.getElementById('guestCount').value = '';
+            }
+        });
+    });
+
+    // Generar campos de nombres de invitados según el select
+    document.getElementById('guestCount').addEventListener('input', function() {
+        const guestNamesDiv = document.getElementById('guestNames');
+        guestNamesDiv.innerHTML = '';
+        const count = parseInt(this.value, 10);
+        if (count > 0 && count <= 10) { // Limitar a un máximo de 10 invitados
+            for (let i = 1; i <= count; i++) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.name = `guestName${i}`;
+                input.placeholder = `Nombre del invitado ${i}`;
+                input.required = true;
+                guestNamesDiv.appendChild(input);
+            }
+        }
+    });
+    // Mostrar sección de mensaje solo si no se asiste
+    document.querySelectorAll('input[name="attendance"]').forEach(el => {
+        el.addEventListener('change', function() {
+            const guestsSection = document.getElementById('guests-section');
+            const noSection = document.getElementById('no-section');
+            if (this.value === 'yes') {
+                guestsSection.style.display = 'block';
+                noSection.style.display = 'none';
+            } else {
+                guestsSection.style.display = 'none';
+                noSection.style.display = 'block';
+                document.getElementById('guestNames').innerHTML = '';
+                document.getElementById('guestCount').value = '';
+            }
+        });
+    });
 
     // --- Lógica para enviar el formulario ---
     const rsvpForm = document.getElementById('rsvp-form');
     const thankYouMessage = document.getElementById('thank-you-message');
 
     rsvpForm.addEventListener('submit', (e) => {
-        e.preventDefault(); // Evita que la página se recargue
+    e.preventDefault();
 
-        // URL de tu aplicación web de Google Apps Script
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbzRXJydFi4G_LLzZv_ecwMkxOXgkDSIOcMszRMscRDrKdVkgt51Y2oixwsCGHEwqc9l/exec'; // <-- PEGA TU URL AQUÍ
-
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbz2zrooMkoeQbwR5UPxWB-ha4sFd18Cca70X4zR9Sk_qYK5-k6pwPRclLNUJd7QKCTV/exec';
         const submitButton = rsvpForm.querySelector('button[type="submit"]');
-        submitButton.disabled = true; // Deshabilita el botón para evitar envíos múltiples
+        submitButton.disabled = true;
         submitButton.textContent = 'Enviando...';
 
-        // Recopila los datos del formulario
-        const guestName = document.getElementById('guestName').value;
         const attendance = document.querySelector('input[name="attendance"]:checked').value;
         const guestMessage = document.getElementById('guestMessage').value;
 
-        // Envía los datos usando fetch
+        let payload = {
+            attendance: attendance,
+            message: guestMessage
+        };
+
+        if (attendance === "yes") {
+            const guestCount = parseInt(document.getElementById('guestCount').value, 10) || 1;
+            payload.guestCount = guestCount;
+            for (let i = 1; i <= guestCount; i++) {
+                const input = document.querySelector(`input[name="guestName${i}"]`);
+                payload[`guestName${i}`] = input ? input.value : '';
+            }
+        } else {
+            const noGuestName = document.getElementById('noGuestName').value;
+            payload.noGuestName = noGuestName;
+        }
+
         fetch(scriptURL, {
             method: 'POST',
-            mode: 'no-cors', // Importante para evitar errores de CORS con Google Scripts
+            mode: 'no-cors',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                name: guestName,
-                attendance: attendance,
-                message: guestMessage
-            })
+            body: JSON.stringify(payload)
         })
         .then(response => {
-            // Oculta el formulario y muestra el mensaje de agradecimiento
             rsvpForm.style.display = 'none';
             thankYouMessage.style.display = 'block';
-
-            // Opcional: cierra el modal después de unos segundos
             setTimeout(() => {
                 modal.style.display = 'none';
-                // Restablece el formulario para un futuro uso
                 rsvpForm.style.display = 'block';
                 thankYouMessage.style.display = 'none';
                 submitButton.disabled = false;
                 submitButton.textContent = 'Enviar';
                 rsvpForm.reset();
-            }, 4000); // 4 segundos
+                document.getElementById('guestNames').innerHTML = '';
+            }, 10000);
         })
         .catch(error => {
             console.error('Error!', error.message);

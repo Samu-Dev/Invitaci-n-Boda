@@ -378,6 +378,7 @@ input[type="text"],
 textarea {
     font-family: "Poppins", sans-serif;
     padding: 0.8rem;
+    margin: 4px 0;
     border: 1px solid #ddd;
     border-radius: 5px;
 }
@@ -394,6 +395,14 @@ textarea {
     transition: background-color 0.3s ease;
 }
 
+#guestCount{
+    font-family: "Poppins", sans-serif;
+    font-size: 14px;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
 .main-button:hover {
     background-color: var(--secondary-color);
 }
@@ -406,7 +415,7 @@ footer {
     background-color: var(--secondary-color);
     color: var(--white);
     text-align: center;
-    padding: 2rem;
+    padding: 1rem;
 }
 
 /* Responsive Design */
@@ -417,11 +426,24 @@ footer {
     .nav-links {
         display: none;
     }
-
+    .modal-content {
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+    #guestCount {
+        max-height: 200px;
+        overflow-y: auto;
+        display: block;
+    }
+    form input[type="text"],
+    form textarea,
+    #guestCount {
+        width: 100%;
+        box-sizing: border-box;
+    }
     .countdown {
         gap: 1rem;
     }
-
     .location-card,
     .dress-code-container {
         grid-template-columns: 1fr;
