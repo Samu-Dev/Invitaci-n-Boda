@@ -278,38 +278,68 @@ function renderGallery() {
     });
 }
 renderGallery();
-/* Animaciones on-scroll: mejoradas con stagger y delay aleatorio para gallery items */
+
+// === Carousel buttons: scroll logic ===
+(function() {
+    const leftBtn = document.querySelector('.carousel-btn.left');
+    const rightBtn = document.querySelector('.carousel-btn.right');
+    const gallery = document.getElementById('photo-gallery');
+
+    if (!gallery) return;
+
+    function getGapPx() {
+        const gap = getComputedStyle(gallery).gap;
+        return gap ? parseFloat(gap) : 16;
+    }
+
+    function scrollGallery(direction) {
+        const item = gallery.querySelector('.gallery-item');
+        if (!item) return;
+        const itemWidth = Math.ceil(item.getBoundingClientRect().width) + getGapPx();
+        if (direction === 'left') {
+            gallery.scrollBy({ left: -itemWidth, behavior: 'smooth' });
+        } else {
+            gallery.scrollBy({ left: itemWidth, behavior: 'smooth' });
+        }
+    }
+
+    if (leftBtn) leftBtn.addEventListener('click', () => scrollGallery('left'));
+    if (rightBtn) rightBtn.addEventListener('click', () => scrollGallery('right'));
+
+    // Optional: enable keyboard arrows when gallery focused
+    gallery.tabIndex = gallery.tabIndex || 0;
+    gallery.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') scrollGallery('left');
+        if (e.key === 'ArrowRight') scrollGallery('right');
+    });
+})();
+
+/* ==== Reveal on scroll (restaurar animaciones) ==== */
 (function() {
     function initScrollReveals() {
-        const options = { root: null, rootMargin: '0px 0px -12% 0px', threshold: 0.12 };
-        const observer = new IntersectionObserver((entries, obs) => {
+        const options = {
+            root: null,
+            rootMargin: '0px 0px -12% 0px',
+            threshold: 0.12
+        };
+        const io = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    // stagger para contenedores
-                    if (entry.target.classList.contains('reveal') && entry.target.classList.contains('stagger')) {
-                        const children = Array.from(entry.target.children);
-                        children.forEach((ch, i) => {
-                            ch.style.transitionDelay = `${i * 80}ms`;
-                        });
-                    }
-                    // pequeña variación para gallery items
-                    if (entry.target.classList.contains('gallery-item')) {
-                        const media = entry.target.querySelector('.media');
-                        if (media) media.style.transitionDelay = `${Math.random() * 240}ms`;
-                    }
                     entry.target.classList.add('in-view');
-                    // opcional: obs.unobserve(entry.target);
+                    // si quieres que solo ocurra una vez:
+                    // io.unobserve(entry.target);
                 } else {
-                    // mantener para repetir animación si quieres
+                    // si quieres repetir la animación al salir/entrar, descomenta:
                     // entry.target.classList.remove('in-view');
                 }
             });
         }, options);
 
+        // selectores a observar
         const selectors = [
+            '.banner-content',
             '.banner-content *',
             '.section-content',
-            '.section-content > *',
             '.gallery-item',
             '.countdown-item',
             '.location-card',
@@ -317,15 +347,19 @@ renderGallery();
             '.dress-column',
             '.modal-content'
         ];
-        document.querySelectorAll(selectors.join(', ')).forEach(el => {
+        const targets = document.querySelectorAll(selectors.join(', '));
+
+        targets.forEach(el => {
+            // Añadir clase base si no existe (permite CSS .reveal)
             if (!el.classList.contains('reveal')) el.classList.add('reveal');
-            observer.observe(el);
+            io.observe(el);
         });
     }
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initScrollReveals);
     } else {
-        initScrollReveals();
+        // Si ya cargó, esperar un tick para asegurar que renderGallery ya ejecutó
+        setTimeout(initScrollReveals, 60);
     }
 })();

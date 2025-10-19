@@ -382,9 +382,8 @@ h2 {
 /* Cada ítem */
 .gallery-item {
     flex: 0 0 32%;
-    max-width: 400px;
+    max-width: 350px;
     min-width: 250px;
-    aspect-ratio: 16/9; /* Mantiene proporción */
     border-radius: 10px;
     overflow: hidden;
     background: #fff;
@@ -554,7 +553,7 @@ textarea {
     height: 100%;
     border-radius: 12px;
     overflow: hidden;
-    background: #000;
+    background: #fff;
     transition: transform 420ms cubic-bezier(.22,.9,.32,1), box-shadow 420ms cubic-bezier(.22,.9,.32,1);
     transform-origin: center center;
     will-change: transform;
@@ -570,6 +569,9 @@ textarea {
     height: 100%;
     object-fit: contain;
     display: block;
+}
+.gallery-item img{
+    object-fit: cover !important;
 }
 
 /* Hover: levitar + sombra */
