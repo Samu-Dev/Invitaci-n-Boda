@@ -66,16 +66,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const guestsSection = document.getElementById('guests-section');
             const noSection = document.getElementById('no-section');
             const noGuestNameInput = document.getElementById('noGuestName');
+            const guestCountInput = document.getElementById('guestCount');
+            const guestNamesDiv = document.getElementById('guestNames');
             if (this.value === 'yes') {
                 guestsSection.style.display = 'block';
                 noSection.style.display = 'none';
                 if (noGuestNameInput) noGuestNameInput.removeAttribute('required');
+                if (guestCountInput) guestCountInput.setAttribute('required', 'required');
+                guestNamesDiv.innerHTML = '';
             } else {
                 guestsSection.style.display = 'none';
                 noSection.style.display = 'block';
                 if (noGuestNameInput) noGuestNameInput.setAttribute('required', 'required');
-                document.getElementById('guestNames').innerHTML = '';
-                document.getElementById('guestCount').value = '';
+                if (guestCountInput) guestCountInput.removeAttribute('required');
+                guestNamesDiv.innerHTML = '';
+                guestCountInput.value = '';
             }
         });
     });
@@ -84,8 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('guestCount').addEventListener('input', function() {
         const guestNamesDiv = document.getElementById('guestNames');
         guestNamesDiv.innerHTML = '';
+        if (this.offsetParent === null) return; // Si el input está oculto, no hacer nada
         const count = parseInt(this.value, 10);
-        if (count > 0 && count <= 10) { // Limitar a un máximo de 10 invitados
+        if (count > 0 && count <= 15) {
             for (let i = 1; i <= count; i++) {
                 const input = document.createElement('input');
                 input.type = 'text';
@@ -96,19 +102,26 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+
     // Mostrar sección de mensaje solo si no se asiste
     document.querySelectorAll('input[name="attendance"]').forEach(el => {
         el.addEventListener('change', function() {
             const guestsSection = document.getElementById('guests-section');
             const noSection = document.getElementById('no-section');
+            const noGuestNameInput = document.getElementById('noGuestName');
+            const guestCountInput = document.getElementById('guestCount');
             if (this.value === 'yes') {
                 guestsSection.style.display = 'block';
                 noSection.style.display = 'none';
+                if (noGuestNameInput) noGuestNameInput.removeAttribute('required');
+                if (guestCountInput) guestCountInput.setAttribute('required', 'required');
             } else {
                 guestsSection.style.display = 'none';
                 noSection.style.display = 'block';
+                if (noGuestNameInput) noGuestNameInput.setAttribute('required', 'required');
+                if (guestCountInput) guestCountInput.removeAttribute('required');
                 document.getElementById('guestNames').innerHTML = '';
-                document.getElementById('guestCount').value = '';
+                guestCountInput.value = '';
             }
         });
     });
@@ -200,17 +213,119 @@ document.getElementById('waze').addEventListener('click', () => {
     window.open(`https://waze.com/ul?q=${address}`, '_blank');
 });
 
-// Photo Gallery
-const photos = [
-    'https://images.unsplash.com/photo-1519741497674-611481863552',
-    'https://images.unsplash.com/photo-1511285560929-80b456fea0bc',
-    'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8'
+// ==== GALERÍA ====
+const galleryItems = [
+    { type: 'video', src: 'img/Save-the-date.mp4', poster: 'img/poster-save-the-date.webp' },
+    { type: 'video', src: 'img/30-agosto.mp4', poster: 'img/30-agosto-preliminar.webp' },
+    { type: 'image', src: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc' },
+    { type: 'image', src: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8' },
+    // Agrega más elementos si quieres
 ];
 
-const gallery = document.getElementById('photo-gallery');
-photos.forEach(photo => {
-    const img = document.createElement('img');
-    img.src = `${photo}?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80`
-    img.alt = 'Momento especial';
-    gallery.appendChild(img);
-});
+const galleryGrid = document.getElementById('photo-gallery');
+
+// ==== GALERÍA ==== (reemplaza la función renderGallery y añade listeners de tilt)
+function renderGallery() {
+    galleryGrid.innerHTML = '';
+    galleryItems.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'gallery-item';
+
+        // wrapper media para aplicar transform/tilt
+        const media = document.createElement('div');
+        media.className = 'media';
+
+        let element;
+        if (item.type === 'image') {
+            element = document.createElement('img');
+            element.src = item.src;
+            element.alt = 'Galería';
+            element.loading = 'lazy';
+        } else if (item.type === 'video') {
+            element = document.createElement('video');
+            element.src = item.src;
+            element.controls = true;
+            element.preload = 'metadata';
+            element.muted = true;
+            element.playsInline = true;
+            element.setAttribute('webkit-playsinline', '');
+            element.setAttribute('playsinline', '');
+            if (item.poster) element.setAttribute('poster', item.poster);
+        }
+
+        media.appendChild(element);
+        div.appendChild(media);
+        galleryGrid.appendChild(div);
+
+        // Tilt 3D - mousemove
+        div.addEventListener('mousemove', (ev) => {
+            const r = div.getBoundingClientRect();
+            const px = (ev.clientX - r.left) / r.width - 0.5; // -0.5 .. 0.5
+            const py = (ev.clientY - r.top) / r.height - 0.5;
+            const rotY = px * 10; // ajustar intensidad
+            const rotX = -py * 8;
+            media.style.transform = `perspective(900px) rotateY(${rotY}deg) rotateX(${rotX}deg) scale(1.03)`;
+        });
+        div.addEventListener('mouseleave', () => {
+            media.style.transform = '';
+        });
+        div.addEventListener('mouseenter', () => {
+            div.classList.add('hovered');
+        });
+        div.addEventListener('mouseleave', () => {
+            div.classList.remove('hovered');
+        });
+    });
+}
+renderGallery();
+/* Animaciones on-scroll: mejoradas con stagger y delay aleatorio para gallery items */
+(function() {
+    function initScrollReveals() {
+        const options = { root: null, rootMargin: '0px 0px -12% 0px', threshold: 0.12 };
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // stagger para contenedores
+                    if (entry.target.classList.contains('reveal') && entry.target.classList.contains('stagger')) {
+                        const children = Array.from(entry.target.children);
+                        children.forEach((ch, i) => {
+                            ch.style.transitionDelay = `${i * 80}ms`;
+                        });
+                    }
+                    // pequeña variación para gallery items
+                    if (entry.target.classList.contains('gallery-item')) {
+                        const media = entry.target.querySelector('.media');
+                        if (media) media.style.transitionDelay = `${Math.random() * 240}ms`;
+                    }
+                    entry.target.classList.add('in-view');
+                    // opcional: obs.unobserve(entry.target);
+                } else {
+                    // mantener para repetir animación si quieres
+                    // entry.target.classList.remove('in-view');
+                }
+            });
+        }, options);
+
+        const selectors = [
+            '.banner-content *',
+            '.section-content',
+            '.section-content > *',
+            '.gallery-item',
+            '.countdown-item',
+            '.location-card',
+            '.date-card',
+            '.dress-column',
+            '.modal-content'
+        ];
+        document.querySelectorAll(selectors.join(', ')).forEach(el => {
+            if (!el.classList.contains('reveal')) el.classList.add('reveal');
+            observer.observe(el);
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initScrollReveals);
+    } else {
+        initScrollReveals();
+    }
+})();
