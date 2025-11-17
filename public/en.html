@@ -1,13 +1,227 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Wedding | Kevin & Nicole</title>
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#B08042">
+    <title>Nuestra Boda | Kevin & Nicole</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="/favicon.ico" type="image/favicon-icon">
+    <link rel="icon" href="img/favicon.ico" type="image/favicon-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&family=Winky+Sans:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Winky+Sans:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
 </head>
 <body>
-    
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div class="heart-loader"></div><br>
+        <img src="img/logo-K-N.svg" alt="" width="100px" height="50px">
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav id="main-nav">
+        <div class="nav-content">
+            <div class="logo"><img src="img/logo-K-N.svg" alt="" width="80px" height="40px"></div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#date">Date</a></li>
+                <li><a href="#location">Locations</a></li>
+                <li><a href="#dress-code">Dress Code</a></li>
+                <li><a href="#rsvp">RSVP</a></li>
+                <li><a href="#gallery">Gallery</a></li>
+            </ul>
+            <button id="language-toggle" class="lang"><a href="/es">ES</a></button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Banner Section -->
+        <section id="home" class="banner">
+            <div class="banner-content">
+                <h1>Kevin & Nicole</h1>
+                <div class="countdown" id="countdown">
+                    <div class="countdown-item">
+                        <span id="days">00</span>
+                        <span>Days</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span id="hours">00</span>
+                        <span>Hours</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span id="minutes">00</span>
+                        <span>Minutes</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span id="seconds">00</span>
+                        <span>Seconds</span>
+                    </div>
+                </div>
+                <h3 style="font-size: 1.8rem;">Until the wedding</h3>
+            </div>
+        </section>
+
+        <!-- Date Section -->
+        <section id="date" class="date">
+            <div class="section-content">
+                <h2>Our special date</h2>
+                <div class="date-card">
+                    <h3>April 09, 2026</h3>
+                    <p style="margin-bottom: 12px;">“Set me as a seal upon your heart, as a seal upon your arm, for love is strong as death, jealousy is fierce as the grave. Its flashes are flashes of fire, the very flame of the Lord.” <br><em>Song of Solomon 8:6</em></p>
+                    <button id="add-to-calendar" class="add-to-calendar">Save to calendar</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Location Section -->
+        <section id="location" class="location">
+            <div class="section-content">
+                <h2>Locations</h2>
+                <img class="confirm" src="img/FutureMrandMrsPyle-Ubications.jpg" alt="Ubications" width="280px" height="400px">
+                <div class="location-card">
+                    <div id="map" class="map">
+                        <iframe src="https://www.google.com/maps/d/u/0/embed?mid=1EstkN0BY2UNlI3M0dgKnwBxl_8NX_sY&ehbc=2E312F&noprof=1" width="100%" height="300"></iframe>
+                    </div>
+                    <div class="ubications">
+                        <div class="location-details">
+                            <h3>Church</h3>
+                            <h4>A - Our Lady Of Lourdes</h4>
+                            <p>455 Hunter Ave West Islip, NY 11795, United States</p>
+                            <div class="navigation-buttons">
+                                <a href="https://maps.app.goo.gl/tkqXFqpFzWy4ib6UA" class="nav-button" id="google-maps">Google Maps</a> | 
+                                <a href="https://ul.waze.com/ul?venue_id=187892119.1878921193.673871&overview=yes&utm_campaign=default&utm_source=waze_website&utm_medium=lm_share_location" class="nav-button" id="waze">Waze</a>
+                            </div>
+                        </div>
+                        <hr class="line">
+                        <div class="location-details">
+                            <h3>Reception</h3>
+                            <h4>B - Chateau La Mer</h4>
+                            <p>845 South Wellwood Avenue, Lindenhurst, New York, 11757</p>
+                            <div class="navigation-buttons">
+                                <a href="https://maps.app.goo.gl/bo2C65BcbSy7UmMN8" class="nav-button" id="google-maps">Google Maps</a> | 
+                                <a href="https://ul.waze.com/ul?venue_id=187826583.1878527971.922371&overview=yes&utm_campaign=default&utm_source=waze_website&utm_medium=lm_share_location" class="nav-button" id="waze">Waze</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dress Code Section -->
+        <section id="dress-code" class="dress-code">
+            <h2>Dress Code</h2>
+            <div class="dress-code-container">
+                <div class="dress-column">
+                    <h3>Gentleman</h3>
+                    <div class="dress-image men"><img src="img/Traje-Hombres.png" alt="Traje Formal Oscuro Hombres" width="320px" height="320px"></div>
+                    <p>Black Tie</p>
+                </div>
+                <div class="dress-column">
+                    <h3>Ladies</h3>
+                    <div class="dress-image women"><img src="img/Traje-Mujeres.png" alt="Traje Formal Oscuro Mujeres" width="320px" height="320px"></div>
+                    <p>formal attire</p>
+                </div>
+            </div>
+            <img src="img/colors.jpg" alt="Paleta de colores" width="800px" height="120px">
+            <div class="color-palette">
+                <div class="color-chip" style="background-color: #012D54"></div>
+                <div class="color-chip" style="background-color: #0F4A82"></div>
+                <div class="color-chip" style="background-color: #1F5A92"></div>
+                <div class="color-chip" style="background-color: #518CC4"></div>
+                <div class="color-chip" style="background-color: #79B4EC"></div>
+            </div>
+            <p class="dress-column">These tones are reserved for our bridesmaids.<br> Thank you for helping them stand out on our special day.</p>
+        </section>
+
+        <!-- RSVP Section -->
+        <section id="rsvp" class="rsvp">
+            <div class="section-content">
+                <h2>RSVP</h2>
+                <img class="confirm" src="img/FutureMrandMrsPyle-onfirm.jpg" alt="Weeding Kevin and Nicole" width="280px" height="400px">
+                <p>Please confirm your attendance before March 1, 2026.</p>
+                <button id="rsvp-button" class="main-button">RSVP</button>
+            </div>
+        </section>
+
+        <!-- Photo Gallery Section -->
+        <!-- Sección de Galería -->
+        <section id="gallery" class="gallery">
+            <h2>Our Moments</h2>
+            <div class="gallery-carousel-container">
+                <button class="carousel-btn left">⟨</button>
+                <div class="gallery-grid" id="photo-gallery"></div>
+                <button class="carousel-btn right">⟩</button>
+            </div>
+        </section>
+
+
+        <!-- Share Photos Section -->
+        <section id="share-photos" class="share-photos">
+            <h2>Share Your Photos</h2>
+            <div class="qr-container">
+                <div id="qr-code">
+                    <img src="img/qr-photos.png" alt="Share Photos" width="280px" height="336px">
+                    <p>Scan to share your photos of the wedding or click <a href="https://forms.gle/G2EogErdia7iHhK29" target="_blank">here</a></p>
+                </div>
+                
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>With love, Kevin & Nicole</p>
+        <p>Thanks for being part of our story!</p>
+    </footer>
+
+    <!-- Modals -->
+    <div id="rsvp-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>RSVP</h2>
+            <form id="rsvp-form">
+                <div class="attendance-options">
+                    <label>
+                        <input type="radio" name="attendance" value="yes" required>
+                        I will attend
+                    </label>
+                    <label>
+                        <input type="radio" name="attendance" value="no">
+                        I will not attend
+                    </label>
+                </div>
+
+                <div id="guests-section" style="display:none;">
+                    <label for="guestCount">Number of guests:</label>
+                    <input 
+                        type="number" 
+                        id="guestCount" 
+                        name="guestCount" 
+                        min="1" 
+                        max="15" 
+                        required 
+                        placeholder="Cantidad (solo dígitos)"
+                    >
+                    <div id="guestNames"></div>
+                </div>
+
+                <div id="no-section" style="display:none;">
+                    <input type="text" id="noGuestName" name="noGuestName" placeholder="Ingresa tu nombre" required>
+                </div>
+
+                <textarea id="guestMessage" placeholder="Message for the bride and groom (optional)"></textarea>
+                <button type="submit" class="main-button">Send</button>
+            </form>
+            
+            <div id="thank-you-message" style="display:none; text-align: center;">
+                <h3>Thank you for your response!</h3>
+                <p>We have received your confirmation.</p>
+            </div>
+        </div>
+    </div>
+    <script src="main-en.js"></script>
 </body>
 </html>

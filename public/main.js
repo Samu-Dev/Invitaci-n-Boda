@@ -217,14 +217,14 @@ document.getElementById('waze').addEventListener('click', () => {
 const galleryItems = [
     { type: 'video', src: 'img/Save-the-date.mp4', poster: 'img/poster-save-the-date.webp' },
     { type: 'video', src: 'img/30-agosto.mp4', poster: 'img/30-agosto-preliminar.webp' },
-    { type: 'image', src: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc' },
-    { type: 'image', src: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8' },
-    // Agrega más elementos si quieres
+    { type: 'image', src: 'img/FutureMrandMrsPyle-022.jpg' },
+    { type: 'image', src: 'img/FutureMrandMrsPyle-069.jpg' },
+    { type: 'image', src: 'img/FutureMrandMrsPyle-078.jpg' },
+    { type: 'image', src: 'img/FutureMrandMrsPyle-086.jpg' },
+    { type: 'image', src: 'img/FutureMrandMrsPyle-089.jpg' }
 ];
 
 const galleryGrid = document.getElementById('photo-gallery');
-
-// ==== GALERÍA ==== (reemplaza la función renderGallery y añade listeners de tilt)
 function renderGallery() {
     galleryGrid.innerHTML = '';
     galleryItems.forEach(item => {
@@ -329,8 +329,7 @@ renderGallery();
                     // si quieres que solo ocurra una vez:
                     // io.unobserve(entry.target);
                 } else {
-                    // si quieres repetir la animación al salir/entrar, descomenta:
-                    // entry.target.classList.remove('in-view');
+                    entry.target.classList.remove('in-view');
                 }
             });
         }, options);
@@ -361,5 +360,134 @@ renderGallery();
     } else {
         // Si ya cargó, esperar un tick para asegurar que renderGallery ya ejecutó
         setTimeout(initScrollReveals, 60);
+    }
+})();
+
+/* ==== Mejor carrusel: navegación por snap positions y tilt optimizado ==== */
+(function initImprovedCarousel() {
+    const gallery = document.getElementById('photo-gallery');
+    if (!gallery) return;
+
+    let items = Array.from(gallery.querySelectorAll('.gallery-item'));
+    let snapPositions = [];
+    const leftBtn = document.querySelector('.carousel-btn.left');
+    const rightBtn = document.querySelector('.carousel-btn.right');
+
+    // recalcula posiciones de snap (centro de cada item relativo al contenedor)
+    function computeSnapPositions() {
+        items = Array.from(gallery.querySelectorAll('.gallery-item'));
+        snapPositions = items.map(item => {
+            // posición donde queremos hacer scroll para centrar el item
+            const itemRect = item.getBoundingClientRect();
+            const galleryRect = gallery.getBoundingClientRect();
+            const offset = item.offsetLeft - (gallery.clientWidth / 2 - itemRect.width / 2);
+            return Math.round(offset);
+        });
+    }
+
+    // buscar índice objetivo (prev/next) según scrollLeft actual
+    function findNearestIndex(currentScroll, direction = 'next') {
+        for (let i = 0; i < snapPositions.length; i++) {
+            if (direction === 'next' && snapPositions[i] > currentScroll + 5) return i;
+            if (direction === 'prev' && snapPositions[i] >= currentScroll - 5) {
+                const idx = i - 1;
+                return idx >= 0 ? idx : 0;
+            }
+        }
+        return direction === 'next' ? snapPositions.length - 1 : 0;
+    }
+
+    // scroll to index
+    function scrollToIndex(index) {
+        index = Math.max(0, Math.min(snapPositions.length - 1, index));
+        const left = snapPositions[index];
+        gallery.scrollTo({ left, behavior: 'smooth' });
+    }
+
+    // listeners botones
+    if (leftBtn) leftBtn.addEventListener('click', () => {
+        const cur = Math.round(gallery.scrollLeft);
+        const idx = findNearestIndex(cur, 'prev');
+        scrollToIndex(idx);
+    }, { passive: true });
+
+    if (rightBtn) rightBtn.addEventListener('click', () => {
+        const cur = Math.round(gallery.scrollLeft);
+        const idx = findNearestIndex(cur, 'next');
+        scrollToIndex(idx);
+    }, { passive: true });
+
+    // keyboard
+    gallery.tabIndex = gallery.tabIndex || 0;
+    gallery.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') leftBtn && leftBtn.click();
+        if (e.key === 'ArrowRight') rightBtn && rightBtn.click();
+    });
+
+    // recalcula en resize y al cargar imágenes/videos
+    const resizeObserver = new ResizeObserver(() => computeSnapPositions());
+    resizeObserver.observe(gallery);
+    window.addEventListener('load', computeSnapPositions, { passive: true });
+    window.addEventListener('resize', () => {
+        // debounce mínimo
+        clearTimeout(window._galleryResizeTimeout);
+        window._galleryResizeTimeout = setTimeout(computeSnapPositions, 120);
+    }, { passive: true });
+
+    // compute initially after small delay so items exist
+    setTimeout(computeSnapPositions, 60);
+
+    // Optional: update active visual (add .in-view to centered item)
+    let rafId = null;
+    function onScroll() {
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+            const cur = Math.round(gallery.scrollLeft);
+            // find index of nearest snap
+            let nearest = 0;
+            let minDiff = Infinity;
+            snapPositions.forEach((pos, i) => {
+                const d = Math.abs(pos - cur);
+                if (d < minDiff) { minDiff = d; nearest = i; }
+            });
+            items.forEach((it, i) => it.classList.toggle('active', i === nearest));
+        });
+    }
+    gallery.addEventListener('scroll', onScroll, { passive: true });
+
+    // --- Tilt effect: only on pointer:fine (mouse, not touch) and throttle via rAF ---
+    const supportsFinePointer = window.matchMedia && window.matchMedia('(pointer: fine)').matches;
+    if (supportsFinePointer) {
+        items.forEach(item => {
+            const media = item.querySelector('.media');
+            if (!media) return;
+            let busy = false;
+            function handleMove(e) {
+                if (busy) return;
+                busy = true;
+                requestAnimationFrame(() => {
+                    const r = item.getBoundingClientRect();
+                    const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0].clientX);
+                    const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0].clientY);
+                    const px = (clientX - r.left) / r.width - 0.5;
+                    const py = (clientY - r.top) / r.height - 0.5;
+                    const rotY = px * 8;
+                    const rotX = -py * 6;
+                    media.style.transform = `perspective(900px) rotateY(${rotY}deg) rotateX(${rotX}deg) scale(1.02)`;
+                    busy = false;
+                });
+            }
+            const leave = () => media.style.transform = '';
+            item.addEventListener('mousemove', handleMove, { passive: true });
+            item.addEventListener('mouseleave', leave, { passive: true });
+            item.addEventListener('touchmove', handleMove, { passive: true }); // gentle support
+            item.addEventListener('touchend', leave, { passive: true });
+        });
+    } else {
+        // remove any inline transform on touch devices
+        items.forEach(it => {
+            const media = it.querySelector('.media');
+            if (media) media.style.transform = '';
+        });
     }
 })();
