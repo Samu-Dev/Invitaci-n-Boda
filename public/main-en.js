@@ -213,179 +213,120 @@ document.getElementById('waze').addEventListener('click', () => {
     window.open(`https://waze.com/ul?q=${address}`, '_blank');
 });
 
-// ==== GALERÍA ====
+// ==== GALERÍA: render + lazy-load ====
 const galleryItems = [
     { type: 'video', src: 'img/Save-the-date.mp4', poster: 'img/poster-save-the-date.webp' },
-    { type: 'video', src: 'img/30-agosto.mp4', poster: 'img/30-agosto-preliminar.webp' },
-    { type: 'image', src: 'img/FutureMrandMrsPyle-022.jpg' },
-    { type: 'image', src: 'img/FutureMrandMrsPyle-069.jpg' },
-    { type: 'image', src: 'img/FutureMrandMrsPyle-078.jpg' },
-    { type: 'image', src: 'img/FutureMrandMrsPyle-086.jpg' },
-    { type: 'image', src: 'img/FutureMrandMrsPyle-089.jpg' }
+    { type: 'video', src: 'img/30-august.mp4', poster: 'img/30-agosto-preliminar.webp' },
+    { type: 'image', src: 'img/FutureMrandMrsPyle-022.webp' },
+    { type: 'image', src: 'img/FutureMrandMrsPyle-069.webp' },
+    { type: 'image', src: 'img/FutureMrandMrsPyle-078.webp' },
+    { type: 'image', src: 'img/FutureMrandMrsPyle-086.webp' },
+    { type: 'image', src: 'img/FutureMrandMrsPyle-089.webp' }
 ];
 
 const galleryGrid = document.getElementById('photo-gallery');
+
 function renderGallery() {
     galleryGrid.innerHTML = '';
     galleryItems.forEach(item => {
         const div = document.createElement('div');
         div.className = 'gallery-item';
 
-        // wrapper media para aplicar transform/tilt
         const media = document.createElement('div');
         media.className = 'media';
 
-        let element;
         if (item.type === 'image') {
-            element = document.createElement('img');
-            element.src = item.src;
-            element.alt = 'Galería';
-            element.loading = 'lazy';
+            const img = document.createElement('img');
+            img.alt = 'Gallery';
+            img.loading = 'lazy';
+            img.decoding = 'async';
+            img.dataset.src = item.src; // asignar real al intersectar
+            img.classList.add('lazy-media');
+            media.appendChild(img);
         } else if (item.type === 'video') {
-            element = document.createElement('video');
-            element.src = item.src;
-            element.controls = true;
-            element.preload = 'metadata';
-            element.muted = true;
-            element.playsInline = true;
-            element.setAttribute('webkit-playsinline', '');
-            element.setAttribute('playsinline', '');
-            if (item.poster) element.setAttribute('poster', item.poster);
+            const video = document.createElement('video');
+            video.controls = true;
+            video.preload = 'none'; // no descargar hasta needed
+            video.muted = true;
+            video.playsInline = true;
+            video.setAttribute('webkit-playsinline', '');
+            video.setAttribute('playsinline', '');
+            if (item.poster) video.dataset.poster = item.poster;
+            video.dataset.src = item.src;
+            video.classList.add('lazy-media');
+            media.appendChild(video);
         }
 
-        media.appendChild(element);
         div.appendChild(media);
         galleryGrid.appendChild(div);
 
-        // Tilt 3D - mousemove
-        div.addEventListener('mousemove', (ev) => {
-            const r = div.getBoundingClientRect();
-            const px = (ev.clientX - r.left) / r.width - 0.5; // -0.5 .. 0.5
-            const py = (ev.clientY - r.top) / r.height - 0.5;
-            const rotY = px * 10; // ajustar intensidad
-            const rotX = -py * 8;
-            media.style.transform = `perspective(900px) rotateY(${rotY}deg) rotateX(${rotX}deg) scale(1.03)`;
-        });
-        div.addEventListener('mouseleave', () => {
-            media.style.transform = '';
-        });
-        div.addEventListener('mouseenter', () => {
-            div.classList.add('hovered');
-        });
-        div.addEventListener('mouseleave', () => {
-            div.classList.remove('hovered');
-        });
+        // hover class (visual)
+        div.addEventListener('mouseenter', () => div.classList.add('hovered'));
+        div.addEventListener('mouseleave', () => div.classList.remove('hovered'));
     });
 }
 renderGallery();
 
-// === Carousel buttons: scroll logic ===
-(function() {
-    const leftBtn = document.querySelector('.carousel-btn.left');
-    const rightBtn = document.querySelector('.carousel-btn.right');
-    const gallery = document.getElementById('photo-gallery');
-
-    if (!gallery) return;
-
-    function getGapPx() {
-        const gap = getComputedStyle(gallery).gap;
-        return gap ? parseFloat(gap) : 16;
-    }
-
-    function scrollGallery(direction) {
-        const item = gallery.querySelector('.gallery-item');
-        if (!item) return;
-        const itemWidth = Math.ceil(item.getBoundingClientRect().width) + getGapPx();
-        if (direction === 'left') {
-            gallery.scrollBy({ left: -itemWidth, behavior: 'smooth' });
-        } else {
-            gallery.scrollBy({ left: itemWidth, behavior: 'smooth' });
-        }
-    }
-
-    if (leftBtn) leftBtn.addEventListener('click', () => scrollGallery('left'));
-    if (rightBtn) rightBtn.addEventListener('click', () => scrollGallery('right'));
-
-    // Optional: enable keyboard arrows when gallery focused
-    gallery.tabIndex = gallery.tabIndex || 0;
-    gallery.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowLeft') scrollGallery('left');
-        if (e.key === 'ArrowRight') scrollGallery('right');
-    });
-})();
-
-/* ==== Reveal on scroll (restaurar animaciones) ==== */
-(function() {
-    function initScrollReveals() {
-        const options = {
-            root: null,
-            rootMargin: '0px 0px -12% 0px',
-            threshold: 0.12
-        };
-        const io = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('in-view');
-                    // si quieres que solo ocurra una vez:
-                    // io.unobserve(entry.target);
-                } else {
-                    entry.target.classList.remove('in-view');
-                }
-            });
-        }, options);
-
-        // selectores a observar
-        const selectors = [
-            '.banner-content',
-            '.banner-content *',
-            '.section-content',
-            '.gallery-item',
-            '.countdown-item',
-            '.location-card',
-            '.date-card',
-            '.dress-column',
-            '.modal-content'
-        ];
-        const targets = document.querySelectorAll(selectors.join(', '));
-
-        targets.forEach(el => {
-            // Añadir clase base si no existe (permite CSS .reveal)
-            if (!el.classList.contains('reveal')) el.classList.add('reveal');
-            io.observe(el);
+/* Lazy-load media (images & videos) usando IntersectionObserver */
+function initLazyMedia() {
+    const lazyElements = document.querySelectorAll('.lazy-media');
+    if (!('IntersectionObserver' in window)) {
+        lazyElements.forEach(el => {
+            if (el.tagName === 'IMG') el.src = el.dataset.src;
+            if (el.tagName === 'VIDEO') {
+                if (el.dataset.poster) el.poster = el.dataset.poster;
+                el.src = el.dataset.src;
+            }
         });
+        return;
     }
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initScrollReveals);
-    } else {
-        // Si ya cargó, esperar un tick para asegurar que renderGallery ya ejecutó
-        setTimeout(initScrollReveals, 60);
-    }
-})();
+    const io = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            const el = entry.target;
+            if (el.tagName === 'IMG') {
+                el.src = el.dataset.src;
+                el.removeAttribute('data-src');
+            } else if (el.tagName === 'VIDEO') {
+                if (el.dataset.poster) el.poster = el.dataset.poster;
+                el.src = el.dataset.src;
+                el.removeAttribute('data-src');
+                el.load();
+            }
+            obs.unobserve(el);
+        });
+    }, { root: null, rootMargin: '200px 0px', threshold: 0.01 });
 
-/* ==== Mejor carrusel: navegación por snap positions y tilt optimizado ==== */
+    lazyElements.forEach(el => io.observe(el));
+}
+
+// inicializar lazy media sin bloquear (idle)
+if ('requestIdleCallback' in window) {
+    requestIdleCallback(() => initLazyMedia(), { timeout: 500 });
+} else {
+    setTimeout(initLazyMedia, 120);
+}
+
+/* ==== Mejor carrusel: navegación por snap positions y botones ==== */
 (function initImprovedCarousel() {
     const gallery = document.getElementById('photo-gallery');
     if (!gallery) return;
 
-    let items = Array.from(gallery.querySelectorAll('.gallery-item'));
+    let items = () => Array.from(gallery.querySelectorAll('.gallery-item'));
     let snapPositions = [];
     const leftBtn = document.querySelector('.carousel-btn.left');
     const rightBtn = document.querySelector('.carousel-btn.right');
 
-    // recalcula posiciones de snap (centro de cada item relativo al contenedor)
     function computeSnapPositions() {
-        items = Array.from(gallery.querySelectorAll('.gallery-item'));
-        snapPositions = items.map(item => {
-            // posición donde queremos hacer scroll para centrar el item
+        const its = items();
+        snapPositions = its.map(item => {
             const itemRect = item.getBoundingClientRect();
-            const galleryRect = gallery.getBoundingClientRect();
             const offset = item.offsetLeft - (gallery.clientWidth / 2 - itemRect.width / 2);
             return Math.round(offset);
         });
     }
 
-    // buscar índice objetivo (prev/next) según scrollLeft actual
     function findNearestIndex(currentScroll, direction = 'next') {
         for (let i = 0; i < snapPositions.length; i++) {
             if (direction === 'next' && snapPositions[i] > currentScroll + 5) return i;
@@ -397,14 +338,12 @@ renderGallery();
         return direction === 'next' ? snapPositions.length - 1 : 0;
     }
 
-    // scroll to index
     function scrollToIndex(index) {
         index = Math.max(0, Math.min(snapPositions.length - 1, index));
         const left = snapPositions[index];
         gallery.scrollTo({ left, behavior: 'smooth' });
     }
 
-    // listeners botones
     if (leftBtn) leftBtn.addEventListener('click', () => {
         const cur = Math.round(gallery.scrollLeft);
         const idx = findNearestIndex(cur, 'prev');
@@ -417,77 +356,109 @@ renderGallery();
         scrollToIndex(idx);
     }, { passive: true });
 
-    // keyboard
     gallery.tabIndex = gallery.tabIndex || 0;
     gallery.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowLeft') leftBtn && leftBtn.click();
         if (e.key === 'ArrowRight') rightBtn && rightBtn.click();
     });
 
-    // recalcula en resize y al cargar imágenes/videos
     const resizeObserver = new ResizeObserver(() => computeSnapPositions());
     resizeObserver.observe(gallery);
     window.addEventListener('load', computeSnapPositions, { passive: true });
     window.addEventListener('resize', () => {
-        // debounce mínimo
         clearTimeout(window._galleryResizeTimeout);
         window._galleryResizeTimeout = setTimeout(computeSnapPositions, 120);
     }, { passive: true });
 
-    // compute initially after small delay so items exist
-    setTimeout(computeSnapPositions, 60);
+    setTimeout(computeSnapPositions, 80);
 
-    // Optional: update active visual (add .in-view to centered item)
+    // active state on scroll (lightweight)
     let rafId = null;
     function onScroll() {
         if (rafId) cancelAnimationFrame(rafId);
         rafId = requestAnimationFrame(() => {
             const cur = Math.round(gallery.scrollLeft);
-            // find index of nearest snap
-            let nearest = 0;
-            let minDiff = Infinity;
+            let nearest = 0; let minDiff = Infinity;
             snapPositions.forEach((pos, i) => {
                 const d = Math.abs(pos - cur);
                 if (d < minDiff) { minDiff = d; nearest = i; }
             });
-            items.forEach((it, i) => it.classList.toggle('active', i === nearest));
+            items().forEach((it, i) => it.classList.toggle('active', i === nearest));
         });
     }
     gallery.addEventListener('scroll', onScroll, { passive: true });
 
-    // --- Tilt effect: only on pointer:fine (mouse, not touch) and throttle via rAF ---
+    // limit tilt to pointer:fine (no heavy work on touch)
     const supportsFinePointer = window.matchMedia && window.matchMedia('(pointer: fine)').matches;
     if (supportsFinePointer) {
-        items.forEach(item => {
-            const media = item.querySelector('.media');
-            if (!media) return;
-            let busy = false;
-            function handleMove(e) {
-                if (busy) return;
-                busy = true;
-                requestAnimationFrame(() => {
-                    const r = item.getBoundingClientRect();
-                    const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0].clientX);
-                    const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0].clientY);
-                    const px = (clientX - r.left) / r.width - 0.5;
-                    const py = (clientY - r.top) / r.height - 0.5;
-                    const rotY = px * 8;
-                    const rotX = -py * 6;
-                    media.style.transform = `perspective(900px) rotateY(${rotY}deg) rotateX(${rotX}deg) scale(1.02)`;
-                    busy = false;
-                });
-            }
-            const leave = () => media.style.transform = '';
-            item.addEventListener('mousemove', handleMove, { passive: true });
-            item.addEventListener('mouseleave', leave, { passive: true });
-            item.addEventListener('touchmove', handleMove, { passive: true }); // gentle support
-            item.addEventListener('touchend', leave, { passive: true });
-        });
-    } else {
-        // remove any inline transform on touch devices
-        items.forEach(it => {
-            const media = it.querySelector('.media');
-            if (media) media.style.transform = '';
-        });
+        // attach lightweight move handler per item (throttled via rAF)
+        const attachTilt = () => {
+            items().forEach(item => {
+                const media = item.querySelector('.media');
+                if (!media) return;
+                let busy = false;
+                function handleMove(e) {
+                    if (busy) return;
+                    busy = true;
+                    requestAnimationFrame(() => {
+                        const r = item.getBoundingClientRect();
+                        const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0].clientX);
+                        const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0].clientY);
+                        const px = (clientX - r.left) / r.width - 0.5;
+                        const py = (clientY - r.top) / r.height - 0.5;
+                        const rotY = px * 6;
+                        const rotX = -py * 5;
+                        media.style.transform = `perspective(900px) rotateY(${rotY}deg) rotateX(${rotX}deg) scale(1.02)`;
+                        busy = false;
+                    });
+                }
+                const leave = () => media.style.transform = '';
+                item.addEventListener('mousemove', handleMove, { passive: true });
+                item.addEventListener('mouseleave', leave, { passive: true });
+            });
+        };
+        // re-attach after compute (items exist)
+        setTimeout(attachTilt, 120);
     }
 })();
+
+/* Mobile menu toggle: inicializar después de DOMContentLoaded (inglés) */
+document.addEventListener('DOMContentLoaded', () => {
+    (function initMobileMenu_en() {
+        const nav = document.getElementById('main-nav');
+        if (!nav) return;
+        const toggle = document.getElementById('menu-toggle');
+        const links = nav.querySelector('.nav-links');
+        if (!toggle || !links) return;
+        if (toggle.dataset.mobileInit) return;
+        toggle.dataset.mobileInit = '1';
+
+        toggle.addEventListener('click', (e) => {
+            const opened = nav.classList.toggle('menu-open');
+            toggle.setAttribute('aria-expanded', opened ? 'true' : 'false');
+            e.stopPropagation();
+        });
+
+        links.querySelectorAll('a').forEach(a => {
+            a.addEventListener('click', () => {
+                nav.classList.remove('menu-open');
+                toggle.setAttribute('aria-expanded', 'false');
+            });
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!nav.contains(e.target)) {
+                nav.classList.remove('menu-open');
+                toggle.setAttribute('aria-expanded', 'false');
+            }
+        }, { passive: true });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                nav.classList.remove('menu-open');
+                toggle.setAttribute('aria-expanded', 'false');
+                toggle.blur();
+            }
+        });
+    })();
+});

@@ -217,67 +217,115 @@ document.getElementById('waze').addEventListener('click', () => {
 const galleryItems = [
     { type: 'video', src: 'img/Save-the-date.mp4', poster: 'img/poster-save-the-date.webp' },
     { type: 'video', src: 'img/30-agosto.mp4', poster: 'img/30-agosto-preliminar.webp' },
-    { type: 'image', src: 'img/FutureMrandMrsPyle-022.jpg' },
-    { type: 'image', src: 'img/FutureMrandMrsPyle-069.jpg' },
-    { type: 'image', src: 'img/FutureMrandMrsPyle-078.jpg' },
-    { type: 'image', src: 'img/FutureMrandMrsPyle-086.jpg' },
-    { type: 'image', src: 'img/FutureMrandMrsPyle-089.jpg' }
+    { type: 'image', src: 'img/FutureMrandMrsPyle-022.webp' },
+    { type: 'image', src: 'img/FutureMrandMrsPyle-069.webp' },
+    { type: 'image', src: 'img/FutureMrandMrsPyle-078.webp' },
+    { type: 'image', src: 'img/FutureMrandMrsPyle-086.webp' },
+    { type: 'image', src: 'img/FutureMrandMrsPyle-089.webp' }
 ];
 
 const galleryGrid = document.getElementById('photo-gallery');
+// Modifica renderGallery: no asignar src directo, usar data-src/data-poster
 function renderGallery() {
     galleryGrid.innerHTML = '';
     galleryItems.forEach(item => {
         const div = document.createElement('div');
         div.className = 'gallery-item';
 
-        // wrapper media para aplicar transform/tilt
         const media = document.createElement('div');
         media.className = 'media';
 
-        let element;
         if (item.type === 'image') {
-            element = document.createElement('img');
-            element.src = item.src;
-            element.alt = 'Galería';
-            element.loading = 'lazy';
+            const img = document.createElement('img');
+            img.alt = 'Galería';
+            img.loading = 'lazy';
+            img.decoding = 'async';
+            // colocar atributos responsive si tienes versiones: img.srcset = 'img/name-320.webp 320w, img/name-768.webp 768w, img/name-1200.webp 1200w';
+            // img.sizes = '(max-width:768px) 100vw, 33vw';
+            img.dataset.src = item.src; // src real asignado por observer
+            img.classList.add('lazy-media');
+            media.appendChild(img);
         } else if (item.type === 'video') {
-            element = document.createElement('video');
-            element.src = item.src;
-            element.controls = true;
-            element.preload = 'metadata';
-            element.muted = true;
-            element.playsInline = true;
-            element.setAttribute('webkit-playsinline', '');
-            element.setAttribute('playsinline', '');
-            if (item.poster) element.setAttribute('poster', item.poster);
+            const video = document.createElement('video');
+            video.controls = true;
+            video.preload = 'none'; // importante: no descargar hasta que esté visible
+            video.muted = true;
+            video.playsInline = true;
+            video.setAttribute('webkit-playsinline', '');
+            video.setAttribute('playsinline', '');
+            if (item.poster) video.dataset.poster = item.poster;
+            video.dataset.src = item.src; // src asignado por observer
+            video.classList.add('lazy-media');
+            media.appendChild(video);
         }
 
-        media.appendChild(element);
         div.appendChild(media);
         galleryGrid.appendChild(div);
 
-        // Tilt 3D - mousemove
-        div.addEventListener('mousemove', (ev) => {
-            const r = div.getBoundingClientRect();
-            const px = (ev.clientX - r.left) / r.width - 0.5; // -0.5 .. 0.5
-            const py = (ev.clientY - r.top) / r.height - 0.5;
-            const rotY = px * 10; // ajustar intensidad
-            const rotX = -py * 8;
-            media.style.transform = `perspective(900px) rotateY(${rotY}deg) rotateX(${rotX}deg) scale(1.03)`;
-        });
-        div.addEventListener('mouseleave', () => {
-            media.style.transform = '';
-        });
-        div.addEventListener('mouseenter', () => {
-            div.classList.add('hovered');
-        });
-        div.addEventListener('mouseleave', () => {
-            div.classList.remove('hovered');
-        });
+        // hover handlers (tilt) — pueden permanecer
+        div.addEventListener('mouseenter', () => div.classList.add('hovered'));
+        div.addEventListener('mouseleave', () => div.classList.remove('hovered'));
     });
 }
+
+// Lazy load observer: carga img.src / video.src cuando entra en viewport
+function initLazyMedia() {
+    const lazyElements = document.querySelectorAll('.lazy-media');
+    if (!('IntersectionObserver' in window)) {
+        // Fallback: load all immediately
+        lazyElements.forEach(el => {
+            if (el.tagName === 'IMG') el.src = el.dataset.src;
+            if (el.tagName === 'VIDEO') {
+                if (el.dataset.poster) el.poster = el.dataset.poster;
+                el.src = el.dataset.src;
+            }
+        });
+        return;
+    }
+
+    const io = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            const el = entry.target;
+            if (el.tagName === 'IMG') {
+                el.src = el.dataset.src;
+                el.removeAttribute('data-src');
+            } else if (el.tagName === 'VIDEO') {
+                if (el.dataset.poster) el.poster = el.dataset.poster;
+                // asignar src y llamar load(); no reproducir (respeta autoplay policies)
+                el.src = el.dataset.src;
+                el.removeAttribute('data-src');
+                el.load();
+            }
+            obs.unobserve(el);
+        });
+    }, { root: null, rootMargin: '200px 0px', threshold: 0.01 });
+
+    lazyElements.forEach(el => io.observe(el));
+}
+
+// Ejecutar: renderizar galería y luego inicializar lazy-load en idle
 renderGallery();
+if ('requestIdleCallback' in window) {
+    requestIdleCallback(() => initLazyMedia(), { timeout: 500 });
+} else {
+    setTimeout(initLazyMedia, 100);
+}
+
+// Lazy-load para backgrounds y elementos .lazy-media fuera del gallery
+(function initSimpleLazy() {
+    const bgEls = document.querySelectorAll('[data-bg]');
+    bgEls.forEach(el => {
+        // cargar background inmediatamente en mobile/desktop según preferencia o con IO
+        const img = new Image();
+        img.src = el.dataset.bg;
+        img.onload = () => {
+            el.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.3),rgba(0,0,0,0.3)), url('${el.dataset.bg}')`;
+        };
+    });
+
+    // las imágenes con class lazy-media ya las maneja initLazyMedia() desde renderGallery
+})();
 
 // === Carousel buttons: scroll logic ===
 (function() {
@@ -491,3 +539,44 @@ renderGallery();
         });
     }
 })();
+
+/* Mobile menu toggle: inicializar después de DOMContentLoaded (español) */
+document.addEventListener('DOMContentLoaded', () => {
+    (function initMobileMenu_es() {
+        const nav = document.getElementById('main-nav');
+        if (!nav) return;
+        const toggle = document.getElementById('menu-toggle');
+        const links = nav.querySelector('.nav-links');
+        if (!toggle || !links) return;
+        if (toggle.dataset.mobileInit) return;
+        toggle.dataset.mobileInit = '1';
+
+        toggle.addEventListener('click', (e) => {
+            const opened = nav.classList.toggle('menu-open');
+            toggle.setAttribute('aria-expanded', opened ? 'true' : 'false');
+            e.stopPropagation();
+        });
+
+        links.querySelectorAll('a').forEach(a => {
+            a.addEventListener('click', () => {
+                nav.classList.remove('menu-open');
+                toggle.setAttribute('aria-expanded', 'false');
+            });
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!nav.contains(e.target)) {
+                nav.classList.remove('menu-open');
+                toggle.setAttribute('aria-expanded', 'false');
+            }
+        }, { passive: true });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                nav.classList.remove('menu-open');
+                toggle.setAttribute('aria-expanded', 'false');
+                toggle.blur();
+            }
+        });
+    })();
+});

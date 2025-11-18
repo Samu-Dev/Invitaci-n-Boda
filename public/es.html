@@ -24,6 +24,14 @@
     <nav id="main-nav">
         <div class="nav-content">
             <div class="logo"><img src="img/logo-K-N.svg" alt="" width="80px" height="40px"></div>
+
+            <!-- Botón de menú (visible en móvil) -->
+            <button id="menu-toggle" type="button" aria-label="Abrir menú" aria-expanded="false">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+
             <ul class="nav-links">
                 <li><a href="#home">Inicio</a></li>
                 <li><a href="#date">Fecha</a></li>
@@ -39,7 +47,8 @@
     <!-- Main Content -->
     <main>
         <!-- Banner Section -->
-        <section id="home" class="banner">
+        <!-- Banner: usar data-bg para lazy load en mobile si quieres, o usar <picture> para responsive -->
+        <section id="home" class="banner" data-bg="img/principal.jpg">
             <div class="banner-content">
                 <h1>Kevin & Nicole</h1>
                 <div class="countdown" id="countdown">
@@ -79,8 +88,8 @@
         <!-- Location Section -->
         <section id="location" class="location">
             <div class="section-content">
-                <h2>Ubicaciones</h2>
                 <img class="confirm" src="img/FutureMrandMrsPyle-Ubications.jpg" alt="Ubications" width="280px" height="400px">
+                <h2>Ubicaciones</h2>
                 <div class="location-card">
                     <div id="map" class="map">
                         <iframe src="https://www.google.com/maps/d/u/0/embed?mid=1EstkN0BY2UNlI3M0dgKnwBxl_8NX_sY&ehbc=2E312F&noprof=1" width="100%" height="300"></iframe>
@@ -116,16 +125,19 @@
             <div class="dress-code-container">
                 <div class="dress-column">
                     <h3>Caballeros</h3>
-                    <div class="dress-image men"><img src="img/Traje-Hombres.png" alt="Traje Formal Oscuro Hombres" width="320px" height="320px"></div>
+                    <div class="dress-image men"><img src="img/Traje-Hombres.webp" alt="Traje Formal Oscuro Hombres" width="320px" height="320px"></div>
                     <p>Traje y corbata</p>
                 </div>
                 <div class="dress-column">
                     <h3>Damas</h3>
-                    <div class="dress-image women"><img src="img/Traje-Mujeres.png" alt="Traje Formal Oscuro Mujeres" width="320px" height="320px"></div>
+                    <div class="dress-image women">
+                        <img class="lazy-media" data-src="img/Traje-Mujeres.webp" alt="Traje Formal Oscuro Mujeres" loading="lazy" decoding="async" width="320" height="320">
+                    </div>
                     <p>Vestido Formal</p>
                 </div>
             </div>
-            <img src="img/colors.jpg" alt="Paleta de colores" width="800px" height="120px">
+            <!-- Paleta de colores centrada -->
+            <img class="lazy-media" data-src="img/colors.jpg" alt="Paleta de colores" loading="lazy" decoding="async" style="max-width:800px;width:100%;height:auto;border-radius:12px;margin:1.5rem auto;display:block;">
             <div class="color-palette">
                 <div class="color-chip" style="background-color: #012D54"></div>
                 <div class="color-chip" style="background-color: #0F4A82"></div>
@@ -139,8 +151,8 @@
         <!-- RSVP Section -->
         <section id="rsvp" class="rsvp">
             <div class="section-content">
-                <h2>Confirmación de Asistencia</h2>
                 <img class="confirm" src="img/FutureMrandMrsPyle-onfirm.jpg" alt="Weeding Kevin and Nicole" width="280px" height="400px">
+                <h2>Confirmación de Asistencia</h2>
                 <p>Por favor, confirma tu asistencia antes del 1 marzo del 2026</p>
                 <button id="rsvp-button" class="main-button">Confirmar Asistencia</button>
             </div>
@@ -163,7 +175,7 @@
             <h2>Comparte Tus Fotos</h2>
             <div class="qr-container">
                 <div id="qr-code">
-                    <img src="img/qr-photos.png" alt="Share Photos" width="280px" height="336px">
+                    <img src="img/qr-photos.webp" alt="Share Photos" width="280px" height="336px">
                     <p>Escanea para compartir tus fotos de nuestra boda o da click <a href="https://forms.gle/G2EogErdia7iHhK29" target="_blank">aquí</a></p>
                 </div>
                 

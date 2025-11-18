@@ -97,6 +97,10 @@ body::after {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
+#menu-toggle{
+    display: none;
+}
+
 .language-text {
     font-family: "Winky Sans", sans-serif;
     font-size: 1.5rem;
@@ -224,7 +228,7 @@ h1, h2, h3, h4, h5, h6 {
 .banner {
     height: 100vh;
     background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
-                url('img/principal.jpg');
+                url('img/principal.webp');
     background-size: cover;
     background-position: center;
     display: flex;
@@ -675,9 +679,9 @@ footer {
     }
     .banner {
         background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
-                    url('img/principal-1.jpg');
-        background-size: cover;          /* ocupar todo el contenedor */
-        background-repeat: no-repeat;
+                    url('img/principal-1.webp') !important;
+        background-size: cover !important;
+        background-repeat: no-repeat !important;
     }
     .banner-content {
         margin-top: 9rem;
@@ -735,5 +739,88 @@ footer {
     }
     .carousel-btn.right {
         right: 0;
+    }
+}
+
+/* Mobile nav toggle + responsive nav (ajuste: ocultar en desktop, mostrar solo en mobile) */
+
+#main-nav { position: relative; z-index: 9999; }
+.nav-content { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+
+/* Por defecto (desktop) el botón está oculto */
+#menu-toggle {
+    display: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Estilos de las barras (siempre aplican) */
+#menu-toggle .bar {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--primary-color, #B08042);
+    border-radius: 2px;
+    transition: transform 220ms ease, opacity 220ms ease;
+    transform-origin: center;
+}
+
+/* Transformación a "X" cuando el menú está abierto (usa la clase .menu-open en #main-nav) */
+#main-nav.menu-open #menu-toggle .bar:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+}
+#main-nav.menu-open #menu-toggle .bar:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+}
+#main-nav.menu-open #menu-toggle .bar:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
+}
+
+#menu-toggle:focus {
+    outline: 3px solid rgba(176,128,66,0.16);
+    outline-offset: 4px;
+    border-radius: 6px;
+}
+
+/* Mobile: mostrar toggle y ocultar links por defecto (se muestran con .menu-open) */
+@media (max-width: 768px) {
+    #menu-toggle {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 6px;
+        width: 44px;
+        height: 44px;
+        padding: 6px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+    }
+
+    .nav-links {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        left: 0;
+        display: none;
+        flex-direction: column;
+        gap: 0.25rem;
+        background: rgba(255,255,255,0.98);
+        padding: 0.75rem 1rem;
+        box-shadow: 0 8px 24px rgba(2,29,72,0.08);
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+    }
+
+    #main-nav.menu-open .nav-links {
+        display: flex;
+    }
+
+    .nav-links a {
+        display: block;
+        padding: 0.6rem 0.75rem;
+        width: 100%;
+        text-align: center;
     }
 }

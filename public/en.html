@@ -24,6 +24,14 @@
     <nav id="main-nav">
         <div class="nav-content">
             <div class="logo"><img src="img/logo-K-N.svg" alt="" width="80px" height="40px"></div>
+
+            <!-- Botón de menú (visible en móvil) -->
+            <button id="menu-toggle" type="button" aria-label="Abrir menú" aria-expanded="false">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+
             <ul class="nav-links">
                 <li><a href="#home">Home</a></li>
                 <li><a href="#date">Date</a></li>
@@ -79,8 +87,8 @@
         <!-- Location Section -->
         <section id="location" class="location">
             <div class="section-content">
+                <img class="confirm" src="img/FutureMrandMrsPyle-Ubications.webp" alt="Ubications" width="280" height="400" loading="lazy" decoding="async">
                 <h2>Locations</h2>
-                <img class="confirm" src="img/FutureMrandMrsPyle-Ubications.jpg" alt="Ubications" width="280px" height="400px">
                 <div class="location-card">
                     <div id="map" class="map">
                         <iframe src="https://www.google.com/maps/d/u/0/embed?mid=1EstkN0BY2UNlI3M0dgKnwBxl_8NX_sY&ehbc=2E312F&noprof=1" width="100%" height="300"></iframe>
@@ -116,16 +124,23 @@
             <div class="dress-code-container">
                 <div class="dress-column">
                     <h3>Gentleman</h3>
-                    <div class="dress-image men"><img src="img/Traje-Hombres.png" alt="Traje Formal Oscuro Hombres" width="320px" height="320px"></div>
-                    <p>Black Tie</p>
+                    <!-- Dress Code images -->
+                    <div class="dress-image men">
+                        <img src="img/Traje-Hombres.webp" alt="Traje Formal Hombres" width="320" height="320" loading="lazy" decoding="async">
+                    </div>
+                    <p>Business Professional Attire</p>
                 </div>
                 <div class="dress-column">
                     <h3>Ladies</h3>
-                    <div class="dress-image women"><img src="img/Traje-Mujeres.png" alt="Traje Formal Oscuro Mujeres" width="320px" height="320px"></div>
-                    <p>formal attire</p>
+                    <!-- Dress Code images -->
+                    <div class="dress-image women">
+                        <img src="img/Traje-Mujeres.webp" alt="Traje Formal Mujeres" width="320" height="320" loading="lazy" decoding="async">
+                    </div>
+                    <p>Formal Attire</p>
                 </div>
             </div>
-            <img src="img/colors.jpg" alt="Paleta de colores" width="800px" height="120px">
+            <!-- Paleta de colores -->
+            <img src="img/colors.webp" alt="Paleta de colores" width="800" height="120" loading="lazy" decoding="async" style="display:block;margin:1.2rem auto;max-width:100%;height:auto;">
             <div class="color-palette">
                 <div class="color-chip" style="background-color: #012D54"></div>
                 <div class="color-chip" style="background-color: #0F4A82"></div>
@@ -139,8 +154,9 @@
         <!-- RSVP Section -->
         <section id="rsvp" class="rsvp">
             <div class="section-content">
+                <!-- RSVP image -->
+                <img class="confirm" src="img/FutureMrandMrsPyle-onfirm.webp" alt="Wedding Kevin and Nicole" width="280" height="400" loading="lazy" decoding="async">
                 <h2>RSVP</h2>
-                <img class="confirm" src="img/FutureMrandMrsPyle-onfirm.jpg" alt="Weeding Kevin and Nicole" width="280px" height="400px">
                 <p>Please confirm your attendance before March 1, 2026.</p>
                 <button id="rsvp-button" class="main-button">RSVP</button>
             </div>
@@ -163,7 +179,8 @@
             <h2>Share Your Photos</h2>
             <div class="qr-container">
                 <div id="qr-code">
-                    <img src="img/qr-photos.png" alt="Share Photos" width="280px" height="336px">
+                    <!-- QR -->
+                    <img src="img/qr-photos.webp" alt="Share Photos" width="280" height="336" loading="lazy" decoding="async">
                     <p>Scan to share your photos of the wedding or click <a href="https://forms.gle/G2EogErdia7iHhK29" target="_blank">here</a></p>
                 </div>
                 
@@ -203,13 +220,13 @@
                         min="1" 
                         max="15" 
                         required 
-                        placeholder="Cantidad (solo dígitos)"
+                        placeholder="Quantity (digits only)"
                     >
                     <div id="guestNames"></div>
                 </div>
 
                 <div id="no-section" style="display:none;">
-                    <input type="text" id="noGuestName" name="noGuestName" placeholder="Ingresa tu nombre" required>
+                    <input type="text" id="noGuestName" name="noGuestName" placeholder="Enter your name" required>
                 </div>
 
                 <textarea id="guestMessage" placeholder="Message for the bride and groom (optional)"></textarea>
